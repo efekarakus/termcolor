@@ -30,5 +30,9 @@ if termcolor.Supports8(os.Stdout) {}
 if termcolor.SupportsNone(os.Stdout) {}
 ```
 
+## Credits
+* [Efe Karakus](https://www.efekarakus.com/)
+* [chalk/supports-color](https://github.com/chalk/supports-color/)
+
 ## License
 The MIT License (MIT) - see [LICENSE](https://github.com/efekarakus/termcolor/blob/master/LICENSE) for more details.
