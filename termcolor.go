@@ -3,6 +3,7 @@ package termcolor
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/mattn/go-isatty"
 )
@@ -60,11 +61,18 @@ func SupportLevel(f FileDescriptor) Level {
 	if has256Env() {
 		return Level256
 	}
-	if !isatty.IsTerminal(f.Fd()) {
+	if !isTerminal(f.Fd()) {
 		return LevelNone
+	}
+	min := minLevel()
+	if isDumbTerminal() {
+		return min
 	}
 	return LevelNone
 }
+
+// Point to dependency for testing.
+var isTerminal = isatty.IsTerminal
 
 func hasDisabledEnv() bool {
 	if os.Getenv("no-color") != "" {
@@ -90,4 +98,47 @@ func has16MEnv() bool {
 
 func has256Env() bool {
 	return os.Getenv("color") == "256"
+}
+
+func minLevel() Level {
+	if len(os.Getenv("FORCE_COLOR")) > 0 {
+		return forceColorValue()
+	}
+	if len(os.Getenv("color")) > 0 {
+		return Level8
+	}
+	if len(os.Getenv("colors")) > 0 {
+		return Level8
+	}
+	return LevelNone
+}
+
+func isDumbTerminal() bool {
+	return os.Getenv("TERM") == "dumb"
+}
+
+func forceColorValue() Level {
+	fc := os.Getenv("FORCE_COLOR")
+	if fc == "true" {
+		return Level8
+	}
+	if fc == "false" {
+		return LevelNone
+	}
+	num, err := strconv.Atoi(fc)
+	if err != nil {
+		// If not a number then return basic colors.
+		return Level8
+	}
+	switch l := Level(num); l {
+	case LevelNone:
+		return LevelNone
+	case Level256:
+		return Level256
+	case Level16M:
+		return Level16M
+	default:
+		// If the number is out of bounds default to basic.
+		return Level8
+	}
 }
