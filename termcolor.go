@@ -50,6 +50,9 @@ func SupportLevel(f FileDescriptor) Level {
 	if hasDisabledEnv() {
 		return LevelNone
 	}
+	if has16MEnv() {
+		return Level16M
+	}
 	return LevelNone
 }
 
@@ -65,5 +68,12 @@ func hasDisabledEnv() bool {
 }
 
 func has16MEnv() bool {
-	return false
+	c := os.Getenv("color")
+	if c == "16m" {
+		return true
+	}
+	if c == "full" {
+		return true
+	}
+	return c == "truecolor"
 }

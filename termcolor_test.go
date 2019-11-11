@@ -40,6 +40,27 @@ func TestSupportLevel(t *testing.T) {
 			},
 			wantedLevel: LevelNone,
 		},
+		"with true colors: color=16m": {
+			f: os.Stdout,
+			envs: map[string]string {
+				"color": "16m",
+			},
+			wantedLevel: Level16M,
+		},
+		"with true colors: color=full": {
+			f: os.Stdout,
+			envs: map[string]string {
+				"color": "full",
+			},
+			wantedLevel: Level16M,
+		},
+		"with true colors: color=truecolor": {
+			f: os.Stdout,
+			envs: map[string]string {
+				"color": "truecolor",
+			},
+			wantedLevel: Level16M,
+		},
 	}
 	
 	for name, tc := range testCases {
