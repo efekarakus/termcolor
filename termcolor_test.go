@@ -61,6 +61,17 @@ func TestSupportLevel(t *testing.T) {
 			},
 			wantedLevel: Level16M,
 		},
+		"with 256 colors: color=256": {
+			f: os.Stdout,
+			envs: map[string]string {
+				"color": "256",
+			},
+			wantedLevel: Level256,
+		},
+		"with a fd that's not a terminal": {
+			f: os.Stdin,
+			wantedLevel: LevelNone,
+		},
 	}
 	
 	for name, tc := range testCases {

@@ -1,7 +1,11 @@
 // Package termcolor detects what level of color support your terminal has.
 package termcolor
 
-import "os"
+import (
+	"os"
+
+	"github.com/mattn/go-isatty"
+)
 
 // FileDescriptor is the interface that wraps the file descriptor method.
 type FileDescriptor interface {
@@ -53,6 +57,12 @@ func SupportLevel(f FileDescriptor) Level {
 	if has16MEnv() {
 		return Level16M
 	}
+	if has256Env() {
+		return Level256
+	}
+	if !isatty.IsTerminal(f.Fd()) {
+		return LevelNone
+	}
 	return LevelNone
 }
 
@@ -76,4 +86,8 @@ func has16MEnv() bool {
 		return true
 	}
 	return c == "truecolor"
+}
+
+func has256Env() bool {
+	return os.Getenv("color") == "256"
 }
