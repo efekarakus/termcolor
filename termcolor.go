@@ -21,8 +21,8 @@ type Level int
 const (
 	// LevelNone represents a terminal that does not support colors.
 	LevelNone Level = iota
-	// Level8 represents a terminal that can support the basic colors.
-	Level8
+	// LevelBasic represents a terminal that can support the basic 16 colors.
+	LevelBasic
 	// Level256 represents a terminal that can support 256 colors.
 	Level256
 	// Level16M represents a terminal that can support "true colors".
@@ -39,9 +39,9 @@ func Supports256(f FileDescriptor) bool {
 	return SupportLevel(f) == Level256
 }
 
-// Supports8 returns true if the file descriptor can support basic colors.
-func Supports8(f FileDescriptor) bool {
-	return SupportLevel(f) == Level8
+// SupportsBasic returns true if the file descriptor can support the basic 16 colors.
+func SupportsBasic(f FileDescriptor) bool {
+	return SupportLevel(f) == LevelBasic
 }
 
 // SupportNone returns true if the file descriptor cannot support colors.
@@ -105,10 +105,10 @@ func minLevel() Level {
 		return forceColorValue()
 	}
 	if len(os.Getenv("color")) > 0 {
-		return Level8
+		return LevelBasic
 	}
 	if len(os.Getenv("colors")) > 0 {
-		return Level8
+		return LevelBasic
 	}
 	return LevelNone
 }
@@ -120,7 +120,7 @@ func isDumbTerminal() bool {
 func forceColorValue() Level {
 	fc := os.Getenv("FORCE_COLOR")
 	if fc == "true" {
-		return Level8
+		return LevelBasic
 	}
 	if fc == "false" {
 		return LevelNone
@@ -128,7 +128,7 @@ func forceColorValue() Level {
 	num, err := strconv.Atoi(fc)
 	if err != nil {
 		// If not a number then return basic colors.
-		return Level8
+		return LevelBasic
 	}
 	switch l := Level(num); l {
 	case LevelNone:
@@ -139,6 +139,6 @@ func forceColorValue() Level {
 		return Level16M
 	default:
 		// If the number is out of bounds default to basic.
-		return Level8
+		return LevelBasic
 	}
 }

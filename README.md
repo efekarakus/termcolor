@@ -15,7 +15,7 @@ case termcolor.Level16M:
     // wrap text with 24 bit color https://en.wikipedia.org/wiki/ANSI_escape_code#24-bit
 case termcolor.Level256:
     // wrap text with 8 bit color https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
-case termcolor.Level8:
+case termcolor.LevelBasic:
     // wrap text with 3/4 bit color https://en.wikipedia.org/wiki/ANSI_escape_code#3/4_bit
 case default:
     // no color, return text as is.
@@ -26,7 +26,7 @@ Alternatively, you can use:
 ```go
 if termcolor.Supports16M(os.Stdout) {}
 if termcolor.Supports256(os.Stdout) {}
-if termcolor.Supports8(os.Stdout) {}
+if termcolor.SupportsBasic(os.Stdout) {}
 if termcolor.SupportsNone(os.Stdout) {}
 ```
 

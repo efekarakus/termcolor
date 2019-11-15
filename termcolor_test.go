@@ -68,8 +68,8 @@ func TestSupportLevel(t *testing.T) {
 				"FORCE_COLOR": "true",
 				"TERM": "dumb",
 			},
-			isTerminal: true,
-			wantedLevel: Level8,
+			isTerminal:  true,
+			wantedLevel: LevelBasic,
 		},
 		"with a dumb terminal: FORCE_COLOR=false": {
 			envs: map[string]string {
@@ -84,8 +84,8 @@ func TestSupportLevel(t *testing.T) {
 				"FORCE_COLOR": "123",
 				"TERM": "dumb",
 			},
-			isTerminal: true,
-			wantedLevel: Level8,
+			isTerminal:  true,
+			wantedLevel: LevelBasic,
 		},
 		"with a dumb terminal: FORCE_COLOR is within bounds": {
 			envs: map[string]string {
@@ -100,16 +100,16 @@ func TestSupportLevel(t *testing.T) {
 				"color": "true",
 				"TERM": "dumb",
 			},
-			isTerminal: true,
-			wantedLevel: Level8,
+			isTerminal:  true,
+			wantedLevel: LevelBasic,
 		},
 		"with a dumb terminal: colors is set": {
 			envs: map[string]string {
 				"colors": "true",
 				"TERM": "dumb",
 			},
-			isTerminal: true,
-			wantedLevel: Level8,
+			isTerminal:  true,
+			wantedLevel: LevelBasic,
 		},
 	}
 	
