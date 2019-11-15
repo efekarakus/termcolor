@@ -3,7 +3,6 @@
 package termcolor
 
 import (
-	"fmt"
 	"strconv"
 
 	"golang.org/x/sys/windows/registry"
@@ -19,14 +18,12 @@ func windowsLevel() (Level, bool) {
 	}
 	defer key.Close()
 	maj, _, err := key.GetIntegerValue("CurrentMajorVersionNumber")
-	fmt.Printf("CurrentMajorVersionNumber: %d\n", maj)
 	if maj < 10 {
 		return LevelBasic, true
 	}
 	// Windows 10 build 10586 is the first Windows release that supports 256 colors.
 	// Windows 10 build 14931 is the first release that supports truecolor.
 	cb, _, err := key.GetStringValue("CurrentBuild")
-	fmt.Printf("CurrentBuild: %s\n", cb)
 	cbv, err := strconv.Atoi(cb)
 	if err != nil {
 		return LevelBasic, true
