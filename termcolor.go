@@ -3,6 +3,7 @@ package termcolor
 
 import (
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -68,6 +69,9 @@ func SupportLevel(f FileDescriptor) Level {
 	min := minLevel()
 	if isDumbTerminal() {
 		return min
+	}
+	l, ok := windowsLevel(); if ok {
+		return l
 	}
 	return LevelNone
 }
