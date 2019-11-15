@@ -4,6 +4,7 @@ package termcolor
 import (
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/mattn/go-isatty"
 )
@@ -52,7 +53,7 @@ func SupportsNone(f FileDescriptor) bool {
 // SupportLevel returns the color level that's supported by the file descriptor.
 // If the environment variables set no color, then returns LevelNone.
 func SupportLevel(f FileDescriptor) Level {
-	if hasDisabledEnv() {
+	if hasDisabledFlag() {
 		return LevelNone
 	}
 	if has16MEnv() {
@@ -71,43 +72,50 @@ func SupportLevel(f FileDescriptor) Level {
 	return LevelNone
 }
 
-// Point to dependency for testing.
+// Point to dependencies for testing.
 var isTerminal = isatty.IsTerminal
 
-func hasDisabledEnv() bool {
-	if os.Getenv("no-color") != "" {
+func hasDisabledFlag() bool {
+	if hasFlag("no-color") {
 		return true
 	}
-	if os.Getenv("no-colors") != "" {
+	if hasFlag("no-colors") {
 		return true
 	}
-	c := os.Getenv("color")
-	return c == "false" || c == "never"
+	if hasFlag("color=false") {
+		return true
+	}
+	return hasFlag("color=never")
 }
 
 func has16MEnv() bool {
-	c := os.Getenv("color")
-	if c == "16m" {
+	if hasFlag("color=16m") {
 		return true
 	}
-	if c == "full" {
+	if hasFlag("color=full") {
 		return true
 	}
-	return c == "truecolor"
+	return hasFlag("color=truecolor")
 }
 
 func has256Env() bool {
-	return os.Getenv("color") == "256"
+	return hasFlag("color=256")
 }
 
 func minLevel() Level {
-	if len(os.Getenv("FORCE_COLOR")) > 0 {
+	if _, ok := os.LookupEnv("FORCE_COLOR"); ok {
 		return forceColorValue()
 	}
-	if len(os.Getenv("color")) > 0 {
+	if hasFlag("color") {
 		return LevelBasic
 	}
-	if len(os.Getenv("colors")) > 0 {
+	if hasFlag("colors") {
+		return LevelBasic
+	}
+	if hasFlag("color=true") {
+		return LevelBasic
+	}
+	if hasFlag("color=always") {
 		return LevelBasic
 	}
 	return LevelNone
@@ -141,4 +149,44 @@ func forceColorValue() Level {
 		// If the number is out of bounds default to basic.
 		return LevelBasic
 	}
+}
+
+// Point to os.Args for testing.
+var args = os.Args
+
+func hasFlag(flag string) bool {
+	// See https://github.com/sindresorhus/has-flag/blob/ecd4cb75870f5d49eef1e0faee328b2019960de3/index.js#L1-L8
+	argv := make([]string, len(args) - 1)
+	copy(argv, args[1:])
+
+	// Prefix the flag with the necessary dashes.
+	var prefix string
+	if !strings.HasPrefix(flag, "-") {
+		if len(flag) == 1 {
+			// Short flag.
+			prefix = "-"
+		} else {
+			prefix = "--"
+		}
+	}
+	pos := indexOf(argv, prefix + flag)
+	if pos == -1 {
+		return false
+	}
+	// Flag parsing stops after the "--" flag.
+	terminatorPos := indexOf(argv, "--")
+	if terminatorPos == -1 {
+		// The flag exists and there is no terminator
+		return true
+	}
+	return pos < terminatorPos
+}
+
+func indexOf(ss []string, s string) int {
+	for i, el := range ss {
+		if el == s {
+			return i
+		}
+	}
+	return -1
 }

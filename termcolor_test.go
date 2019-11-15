@@ -7,63 +7,50 @@ import (
 
 func TestSupportLevel(t *testing.T) {
 	testCases := map[string] struct {
+		args []string
 		envs map[string]string
 		isTerminal bool
 
 		wantedLevel Level
 	} {
 		"with disabled colors: no-color": {
-			envs: map[string] string {
-				"no-color": "true",
-			},
+			args: []string{"cli", "--no-color"},
 			wantedLevel: LevelNone,
 		},
 		"with disabled colors: no-colors": {
-			envs: map[string] string {
-				"no-colors": "true",
-			},
+			args: []string{"cli", "--no-colors"},
 			wantedLevel: LevelNone,
 		},
 		"with disabled colors: color=false": {
-			envs: map[string] string {
-				"color": "false",
-			},
+			args: []string{"cli", "--color=false"},
 			wantedLevel: LevelNone,
 		},
 		"with disabled colors: color=never": {
-			envs: map[string]string{
-				"color": "never",
-			},
+			args: []string{"cli", "--color=never"},
 			wantedLevel: LevelNone,
 		},
 		"with true colors: color=16m": {
-			envs: map[string]string {
-				"color": "16m",
-			},
+			args: []string{"cli", "--color=16m"},
 			wantedLevel: Level16M,
 		},
 		"with true colors: color=full": {
-			envs: map[string]string {
-				"color": "full",
-			},
+			args: []string{"cli", "--color=full"},
 			wantedLevel: Level16M,
 		},
 		"with true colors: color=truecolor": {
-			envs: map[string]string {
-				"color": "truecolor",
-			},
+			args: []string{"cli", "--color=truecolor"},
 			wantedLevel: Level16M,
 		},
 		"with 256 colors: color=256": {
-			envs: map[string]string {
-				"color": "256",
-			},
+			args: []string{"cli", "--color=256"},
 			wantedLevel: Level256,
 		},
 		"with a fd that's not a terminal": {
+			args: []string{"cli"},
 			wantedLevel: LevelNone,
 		},
 		"with a dumb terminal: FORCE_COLOR=true": {
+			args: []string{"cli"},
 			envs: map[string]string {
 				"FORCE_COLOR": "true",
 				"TERM": "dumb",
@@ -72,6 +59,7 @@ func TestSupportLevel(t *testing.T) {
 			wantedLevel: LevelBasic,
 		},
 		"with a dumb terminal: FORCE_COLOR=false": {
+			args: []string{"cli"},
 			envs: map[string]string {
 				"FORCE_COLOR": "false",
 				"TERM": "dumb",
@@ -80,6 +68,7 @@ func TestSupportLevel(t *testing.T) {
 			wantedLevel: LevelNone,
 		},
 		"with a dumb terminal: FORCE_COLOR is out of bounds": {
+			args: []string{"cli"},
 			envs: map[string]string {
 				"FORCE_COLOR": "123",
 				"TERM": "dumb",
@@ -88,6 +77,7 @@ func TestSupportLevel(t *testing.T) {
 			wantedLevel: LevelBasic,
 		},
 		"with a dumb terminal: FORCE_COLOR is within bounds": {
+			args: []string{"cli"},
 			envs: map[string]string {
 				"FORCE_COLOR": "3",
 				"TERM": "dumb",
@@ -96,16 +86,8 @@ func TestSupportLevel(t *testing.T) {
 			wantedLevel: Level16M,
 		},
 		"with a dumb terminal: color is set": {
+			args: []string{"cli", "--color"},
 			envs: map[string]string {
-				"color": "true",
-				"TERM": "dumb",
-			},
-			isTerminal:  true,
-			wantedLevel: LevelBasic,
-		},
-		"with a dumb terminal: colors is set": {
-			envs: map[string]string {
-				"colors": "true",
 				"TERM": "dumb",
 			},
 			isTerminal:  true,
@@ -120,12 +102,18 @@ func TestSupportLevel(t *testing.T) {
 				os.Setenv(k, v)
 				defer os.Unsetenv(k)
 			}
-			old := isTerminal
+			oldIsTerminal := isTerminal
+			oldArgs := args
+
 			isTerminal = mockFalseTty()
 			if tc.isTerminal {
 				isTerminal = mockTrueTty()
 			}
-			defer func() { isTerminal = old }()
+			args = tc.args
+			defer func() {
+				isTerminal = oldIsTerminal
+				args = oldArgs
+			}()
 
 			// When
 			l := SupportLevel(os.Stdout)
