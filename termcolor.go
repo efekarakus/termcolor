@@ -3,7 +3,6 @@ package termcolor
 
 import (
 	"os"
-	"runtime"
 	"strconv"
 	"strings"
 
