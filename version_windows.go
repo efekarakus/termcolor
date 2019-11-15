@@ -12,7 +12,7 @@ import (
 // the level is returned the boolean is true. If an error occurs then LevelBasic and true is returned.
 // If the OS is not windows, then LevelNone and false is returned.
 func windowsLevel() (Level, bool) {
-	key, err :=registry.OpenKey(registry.LOCAL_MACHINE, `SOFTWARE\Microsoft\Windows NT\CurrentVersion`, registry.QUERY_VALUE)
+	key, err := registry.OpenKey(registry.LOCAL_MACHINE, `SOFTWARE\Microsoft\Windows NT\CurrentVersion`, registry.QUERY_VALUE)
 	if err != nil {
 		return LevelBasic, true
 	}

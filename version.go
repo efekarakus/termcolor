@@ -1,3 +1,5 @@
+// +build !windows
+
 package termcolor
 
 // windowsLevel returns the level of the windows terminal. If the OS is indeed windows,
