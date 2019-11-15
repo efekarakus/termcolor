@@ -8,8 +8,8 @@ import (
 	"golang.org/x/sys/windows/registry"
 )
 
-// windowsLevel returns the level of the windows terminal. If the OS is indeed windows,
-// the level is returned the boolean is true. If an error occurs then LevelBasic and true is returned.
+// windowsLevel returns the level of the windows terminal. If the OS is windows, the terminal level is returned and
+// the boolean is set to true. If an error occurs then LevelBasic and true is returned.
 // If the OS is not windows, then LevelNone and false is returned.
 func windowsLevel() (Level, bool) {
 	key, err := registry.OpenKey(registry.LOCAL_MACHINE, `SOFTWARE\Microsoft\Windows NT\CurrentVersion`, registry.QUERY_VALUE)
@@ -18,6 +18,9 @@ func windowsLevel() (Level, bool) {
 	}
 	defer key.Close()
 	maj, _, err := key.GetIntegerValue("CurrentMajorVersionNumber")
+	if err != nil {
+		return LevelBasic, true
+	}
 	if maj < 10 {
 		return LevelBasic, true
 	}

@@ -157,11 +157,8 @@ func forceColorValue() Level {
 // Point to os.Args for testing.
 var args = os.Args
 
+// See https://github.com/sindresorhus/has-flag/blob/ecd4cb75870f5d49eef1e0faee328b2019960de3/index.js#L1-L8
 func hasFlag(flag string) bool {
-	// See https://github.com/sindresorhus/has-flag/blob/ecd4cb75870f5d49eef1e0faee328b2019960de3/index.js#L1-L8
-	argv := make([]string, len(args) - 1)
-	copy(argv, args[1:])
-
 	// Prefix the flag with the necessary dashes.
 	var prefix string
 	if !strings.HasPrefix(flag, "-") {
@@ -172,12 +169,12 @@ func hasFlag(flag string) bool {
 			prefix = "--"
 		}
 	}
-	pos := indexOf(argv, prefix + flag)
+	pos := indexOf(args, prefix + flag)
 	if pos == -1 {
 		return false
 	}
 	// Flag parsing stops after the "--" flag.
-	terminatorPos := indexOf(argv, "--")
+	terminatorPos := indexOf(args, "--")
 	if terminatorPos == -1 {
 		// The flag exists and there is no terminator
 		return true
