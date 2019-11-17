@@ -56,10 +56,10 @@ func SupportLevel(f FileDescriptor) Level {
 	if hasDisabledFlag() {
 		return LevelNone
 	}
-	if has16MEnv() {
+	if has16MFlag() {
 		return Level16M
 	}
-	if has256Env() {
+	if has256Flag() {
 		return Level256
 	}
 	if !isTerminal(f.Fd()) {
@@ -69,11 +69,15 @@ func SupportLevel(f FileDescriptor) Level {
 	if isDumbTerminal() {
 		return min
 	}
-	l, ok := windowsLevel(); if ok {
+	if l, isWindows := lookupWindows(); isWindows {
+		return l
+	}
+	if l, isCI := lookupCI(min); isCI {
 		return l
 	}
 	return LevelNone
 }
+
 
 // Point to dependencies for testing.
 var isTerminal = isatty.IsTerminal
@@ -91,7 +95,7 @@ func hasDisabledFlag() bool {
 	return hasFlag("color=never")
 }
 
-func has16MEnv() bool {
+func has16MFlag() bool {
 	if hasFlag("color=16m") {
 		return true
 	}
@@ -101,7 +105,7 @@ func has16MEnv() bool {
 	return hasFlag("color=truecolor")
 }
 
-func has256Env() bool {
+func has256Flag() bool {
 	return hasFlag("color=256")
 }
 
@@ -152,6 +156,28 @@ func forceColorValue() Level {
 		// If the number is out of bounds default to basic.
 		return LevelBasic
 	}
+}
+
+func lookupCI(min Level) (Level, bool) {
+	if _, ok := os.LookupEnv("CI"); !ok {
+		return LevelNone, false
+	}
+	if _, ok := os.LookupEnv("TRAVIS"); ok {
+		return LevelBasic, true
+	}
+	if _, ok := os.LookupEnv("CIRCLECI"); ok {
+		return LevelBasic, true
+	}
+	if _, ok := os.LookupEnv("APPVEYOR"); ok {
+		return LevelBasic, true
+	}
+	if _, ok := os.LookupEnv("GITLAB_CI"); ok {
+		return LevelBasic, true
+	}
+	if os.Getenv("CI_NAME") == "codeship" {
+		return LevelBasic, true
+	}
+	return min, true
 }
 
 // Point to os.Args for testing.

@@ -93,6 +93,60 @@ func TestSupportLevel(t *testing.T) {
 			isTerminal:  true,
 			wantedLevel: LevelBasic,
 		},
+		"with travis CI": {
+			args: []string{"cli"},
+			envs: map[string]string {
+				"CI": "",
+				"TRAVIS": "",
+			},
+			isTerminal: true,
+			wantedLevel: LevelBasic,
+		},
+		"with circle CI": {
+			args: []string{"cli"},
+			envs: map[string]string {
+				"CI": "",
+				"CIRCLECI": "",
+			},
+			isTerminal: true,
+			wantedLevel: LevelBasic,
+		},
+		"with appveyor CI": {
+			args: []string{"cli"},
+			envs: map[string]string {
+				"CI": "",
+				"APPVEYOR": "",
+			},
+			isTerminal: true,
+			wantedLevel: LevelBasic,
+		},
+		"with gitlab CI": {
+			args: []string{"cli"},
+			envs: map[string]string {
+				"CI": "",
+				"GITLAB_CI": "",
+			},
+			isTerminal: true,
+			wantedLevel: LevelBasic,
+		},
+		"with codeship CI": {
+			args: []string{"cli"},
+			envs: map[string]string {
+				"CI": "",
+				"CI_NAME": "codeship",
+			},
+			isTerminal: true,
+			wantedLevel: LevelBasic,
+		},
+		"with unknown CI": {
+			args: []string{"cli"},
+			envs: map[string]string {
+				"CI": "",
+				"FORCE_COLOR": "3",
+			},
+			isTerminal: true,
+			wantedLevel: Level16M,
+		},
 	}
 	
 	for name, tc := range testCases {
