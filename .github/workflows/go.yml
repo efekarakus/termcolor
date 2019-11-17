@@ -25,7 +25,10 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v .
+      run: |
+        echo $CI
+        echo $GITHUB_ACTIONS
+        go build -v .
 
     - name: Test
       run: go test .
