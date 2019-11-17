@@ -10,7 +10,7 @@ go get github.com/efekarakus/termcolor
 ## Examples
 Colorize output by finding out which level of color your terminal support:
 ```go
-switch l := termcolor.SupportLevel(os.Stdout); l {
+switch l := termcolor.SupportLevel(os.Stderr); l {
 case termcolor.Level16M:
     // wrap text with 24 bit color https://en.wikipedia.org/wiki/ANSI_escape_code#24-bit
 case termcolor.Level256:
@@ -24,10 +24,10 @@ case default:
 
 Alternatively, you can use:
 ```go
-if termcolor.Supports16M(os.Stdout) {}
-if termcolor.Supports256(os.Stdout) {}
-if termcolor.SupportsBasic(os.Stdout) {}
-if termcolor.SupportsNone(os.Stdout) {}
+if termcolor.Supports16M(os.Stderr) {}
+if termcolor.Supports256(os.Stderr) {}
+if termcolor.SupportsBasic(os.Stderr) {}
+if termcolor.SupportsNone(os.Stderr) {}
 ```
 
 ## Credits
