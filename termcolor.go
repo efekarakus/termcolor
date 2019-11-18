@@ -3,6 +3,7 @@ package termcolor
 
 import (
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -158,7 +159,18 @@ func forceColorValue() Level {
 	}
 }
 
+// Matches if the team city version is greater than 9.1.0
+var teamCityVersion = regexp.MustCompile(`/^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/`)
+
 func lookupCI(min Level) (Level, bool) {
+	if _, ok := os.LookupEnv("TEAMCITY_VERSION"); ok {
+		if teamCityVersion.MatchString(os.Getenv("TEAMCITY_VERSION")) {
+			return LevelBasic, true
+		}
+		return LevelNone, true
+	}
+	
+	// Other CI products set the env CI=true.
 	if _, ok := os.LookupEnv("CI"); !ok {
 		return LevelNone, false
 	}

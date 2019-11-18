@@ -96,8 +96,8 @@ func TestSupportLevel(t *testing.T) {
 		"with travis CI": {
 			args: []string{"cli"},
 			envs: map[string]string {
-				"CI": "",
-				"TRAVIS": "",
+				"CI": "true",
+				"TRAVIS": "1",
 			},
 			isTerminal: true,
 			wantedLevel: LevelBasic,
@@ -105,8 +105,8 @@ func TestSupportLevel(t *testing.T) {
 		"with circle CI": {
 			args: []string{"cli"},
 			envs: map[string]string {
-				"CI": "",
-				"CIRCLECI": "",
+				"CI": "true",
+				"CIRCLECI": "true",
 			},
 			isTerminal: true,
 			wantedLevel: LevelBasic,
@@ -114,8 +114,8 @@ func TestSupportLevel(t *testing.T) {
 		"with appveyor CI": {
 			args: []string{"cli"},
 			envs: map[string]string {
-				"CI": "",
-				"APPVEYOR": "",
+				"CI": "true",
+				"APPVEYOR": "true",
 			},
 			isTerminal: true,
 			wantedLevel: LevelBasic,
@@ -123,8 +123,8 @@ func TestSupportLevel(t *testing.T) {
 		"with gitlab CI": {
 			args: []string{"cli"},
 			envs: map[string]string {
-				"CI": "",
-				"GITLAB_CI": "",
+				"CI": "true",
+				"GITLAB_CI": "true",
 			},
 			isTerminal: true,
 			wantedLevel: LevelBasic,
@@ -132,7 +132,7 @@ func TestSupportLevel(t *testing.T) {
 		"with codeship CI": {
 			args: []string{"cli"},
 			envs: map[string]string {
-				"CI": "",
+				"CI": "true",
 				"CI_NAME": "codeship",
 			},
 			isTerminal: true,
@@ -141,11 +141,27 @@ func TestSupportLevel(t *testing.T) {
 		"with unknown CI": {
 			args: []string{"cli"},
 			envs: map[string]string {
-				"CI": "",
+				"CI": "true",
 				"FORCE_COLOR": "3",
 			},
 			isTerminal: true,
 			wantedLevel: Level16M,
+		},
+		"with teamcity version < 9.1": {
+			args: []string{"cli"},
+			envs: map[string]string {
+				"TEAMCITY_VERSION": "9.0.5 (build 32523)",
+			},
+			isTerminal: true,
+			wantedLevel: LevelNone,
+		},
+		"with teamcity version >= 9.1": {
+			args: []string{"cli"},
+			envs: map[string]string {
+				"TEAMCITY_VERSION": "9.1.0 (build 32523)",
+			},
+			isTerminal: true,
+			wantedLevel: LevelNone,
 		},
 	}
 	
