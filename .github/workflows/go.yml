@@ -26,8 +26,6 @@ jobs:
 
     - name: Build
       run: |
-        echo $CI
-        echo $GITHUB_ACTIONS
         go build -v .
 
     - name: Test
