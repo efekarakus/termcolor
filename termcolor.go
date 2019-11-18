@@ -160,7 +160,7 @@ func forceColorValue() Level {
 }
 
 // Matches if the team city version is greater than 9.1.0
-var teamCityVersion = regexp.MustCompile(`/^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/`)
+var teamCityVersion = regexp.MustCompile(`^(9\.(0*[1-9]\d*)\.|\d{2,}\.)`)
 
 func lookupCI(min Level) (Level, bool) {
 	if _, ok := os.LookupEnv("TEAMCITY_VERSION"); ok {
@@ -169,7 +169,10 @@ func lookupCI(min Level) (Level, bool) {
 		}
 		return LevelNone, true
 	}
-	
+	if _, ok := os.LookupEnv("GITHUB_ACTIONS"); ok {
+		return LevelBasic, true
+	}
+
 	// Other CI products set the env CI=true.
 	if _, ok := os.LookupEnv("CI"); !ok {
 		return LevelNone, false

@@ -161,7 +161,15 @@ func TestSupportLevel(t *testing.T) {
 				"TEAMCITY_VERSION": "9.1.0 (build 32523)",
 			},
 			isTerminal: true,
-			wantedLevel: LevelNone,
+			wantedLevel: LevelBasic,
+		},
+		"with github actions": {
+			args: []string{"cli"},
+			envs: map[string]string {
+				"GITHUB_ACTIONS": "true",
+			},
+			isTerminal: true,
+			wantedLevel: LevelBasic,
 		},
 	}
 	
