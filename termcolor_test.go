@@ -176,9 +176,9 @@ func TestSupportLevel(t *testing.T) {
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
 			// Given
+			os.Clearenv() // Start the tests from a clean state.
 			for k, v := range tc.envs {
 				os.Setenv(k, v)
-				defer os.Unsetenv(k)
 			}
 			oldIsTerminal := isTerminal
 			oldArgs := args
