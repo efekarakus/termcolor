@@ -171,6 +171,36 @@ func TestSupportLevel(t *testing.T) {
 			isTerminal: true,
 			wantedLevel: LevelBasic,
 		},
+		"with COLORTERM set to truecolor": {
+			envs: map[string]string {
+				"COLORTERM": "truecolor",
+			},
+			isTerminal: true,
+			wantedLevel: Level16M,
+		},
+		"level should be 16M when using iTerm 3.0": {
+			envs: map[string]string {
+				"TERM_PROGRAM": "iTerm.app",
+				"TERM_PROGRAM_VERSION": "3.0.10",
+			},
+			isTerminal: true,
+			wantedLevel: Level16M,
+		},
+		"level should be 256 when using iTerm 2.9": {
+			envs: map[string]string {
+				"TERM_PROGRAM": "iTerm.app",
+				"TERM_PROGRAM_VERSION": "2.9.3",
+			},
+			isTerminal: true,
+			wantedLevel: Level256,
+		},
+		"level should be 256 on default apple terminal": {
+			envs: map[string]string {
+				"TERM_PROGRAM": "Apple_Terminal",
+			},
+			isTerminal: true,
+			wantedLevel: Level256,
+		},
 	}
 	
 	for name, tc := range testCases {

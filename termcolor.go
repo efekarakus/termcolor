@@ -54,6 +54,7 @@ func SupportsNone(f FileDescriptor) bool {
 // SupportLevel returns the color level that's supported by the file descriptor.
 // If the environment variables set no color, then returns LevelNone.
 func SupportLevel(f FileDescriptor) Level {
+	// Flags take priority over anything else.
 	if hasDisabledFlag() {
 		return LevelNone
 	}
@@ -63,9 +64,12 @@ func SupportLevel(f FileDescriptor) Level {
 	if has256Flag() {
 		return Level256
 	}
+
 	if !isTerminal(f.Fd()) {
 		return LevelNone
 	}
+
+	// Retrieve color from environment variables.
 	min := minLevel()
 	if isDumbTerminal() {
 		return min
@@ -76,6 +80,13 @@ func SupportLevel(f FileDescriptor) Level {
 	if l, isCI := lookupCI(min); isCI {
 		return l
 	}
+	if os.Getenv("COLORTERM") == "truecolor" {
+		return Level16M
+	}
+	if l, isMacOS := lookupMacOS(); isMacOS {
+		return l
+	}
+
 	return LevelNone
 }
 
@@ -193,6 +204,25 @@ func lookupCI(min Level) (Level, bool) {
 		return LevelBasic, true
 	}
 	return min, true
+}
+
+func lookupMacOS() (Level, bool) {
+	prog, isMacOS := os.LookupEnv("TERM_PROGRAM")
+	if !isMacOS {
+		return LevelNone, false
+	}
+	switch prog {
+	case "iTerm.app":
+		v, _ := strconv.Atoi(strings.Split(os.Getenv("TERM_PROGRAM_VERSION"), ".")[0])
+		if v >= 3 {
+			return Level16M, true
+		}
+		return Level256, true
+	case "Apple_Terminal":
+		return Level256, true
+	default:
+		return LevelNone, false
+	}
 }
 
 // Point to os.Args for testing.
