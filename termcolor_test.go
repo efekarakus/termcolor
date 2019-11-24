@@ -348,6 +348,248 @@ func TestParityWithChalk(t *testing.T) {
 	}
 }
 
+func TestSupports16M(t *testing.T) {
+	testCases := map[string] struct {
+		args []string
+		envs map[string]string
+		isTerminal bool
+
+		wanted bool
+	} {
+		"level truecolor": {
+			args:   []string{"cli", "--color=truecolor"},
+			wanted: true,
+		},
+		"level 256": {
+			args: []string{"cli", "--color=256"},
+		},
+		"level 16": {
+			args: []string{"cli"},
+			envs: map[string]string {
+				"FORCE_COLOR": "true",
+				"TERM": "dumb",
+			},
+			isTerminal:  true,
+		},
+		"level none": {
+			args: []string{"cli"},
+		},
+	}
+
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			// Given
+			os.Clearenv() // Start the tests from a clean state.
+			for k, v := range tc.envs {
+				os.Setenv(k, v)
+			}
+			oldIsTerminal := isTerminal
+			oldArgs := args
+
+			isTerminal = mockFalseTty()
+			if tc.isTerminal {
+				isTerminal = mockTrueTty()
+			}
+			args = tc.args
+			defer func() {
+				isTerminal = oldIsTerminal
+				args = oldArgs
+			}()
+
+			// WHEN
+			supports := Supports16M(os.Stdout)
+
+			// Then
+			if tc.wanted != supports {
+				t.Errorf("expected %v, got %v", tc.wanted, supports)
+			}
+		})
+	}
+}
+
+func TestSupports256(t *testing.T) {
+	testCases := map[string] struct {
+		args []string
+		envs map[string]string
+		isTerminal bool
+
+		wanted bool
+	} {
+		"level truecolor": {
+			args:   []string{"cli", "--color=truecolor"},
+			wanted: true,
+		},
+		"level 256": {
+			args: []string{"cli", "--color=256"},
+			wanted: true,
+		},
+		"level 16": {
+			args: []string{"cli"},
+			envs: map[string]string {
+				"FORCE_COLOR": "true",
+				"TERM": "dumb",
+			},
+			isTerminal:  true,
+		},
+		"level none": {
+			args: []string{"cli"},
+		},
+	}
+
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			// Given
+			os.Clearenv() // Start the tests from a clean state.
+			for k, v := range tc.envs {
+				os.Setenv(k, v)
+			}
+			oldIsTerminal := isTerminal
+			oldArgs := args
+
+			isTerminal = mockFalseTty()
+			if tc.isTerminal {
+				isTerminal = mockTrueTty()
+			}
+			args = tc.args
+			defer func() {
+				isTerminal = oldIsTerminal
+				args = oldArgs
+			}()
+
+			// WHEN
+			supports := Supports256(os.Stdout)
+
+			// Then
+			if tc.wanted != supports {
+				t.Errorf("expected %v, got %v", tc.wanted, supports)
+			}
+		})
+	}
+}
+
+func TestSupportsBasic(t *testing.T) {
+	testCases := map[string] struct {
+		args []string
+		envs map[string]string
+		isTerminal bool
+
+		wanted bool
+	} {
+		"level truecolor": {
+			args:   []string{"cli", "--color=truecolor"},
+			wanted: true,
+		},
+		"level 256": {
+			args: []string{"cli", "--color=256"},
+			wanted: true,
+		},
+		"level 16": {
+			args: []string{"cli"},
+			envs: map[string]string {
+				"FORCE_COLOR": "true",
+				"TERM": "dumb",
+			},
+			isTerminal:  true,
+			wanted: true,
+		},
+		"level none": {
+			args: []string{"cli"},
+		},
+	}
+
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			// Given
+			os.Clearenv() // Start the tests from a clean state.
+			for k, v := range tc.envs {
+				os.Setenv(k, v)
+			}
+			oldIsTerminal := isTerminal
+			oldArgs := args
+
+			isTerminal = mockFalseTty()
+			if tc.isTerminal {
+				isTerminal = mockTrueTty()
+			}
+			args = tc.args
+			defer func() {
+				isTerminal = oldIsTerminal
+				args = oldArgs
+			}()
+
+			// WHEN
+			supports := SupportsBasic(os.Stdout)
+
+			// Then
+			if tc.wanted != supports {
+				t.Errorf("expected %v, got %v", tc.wanted, supports)
+			}
+		})
+	}
+}
+
+func TestSupportsNone(t *testing.T) {
+	testCases := map[string] struct {
+		args []string
+		envs map[string]string
+		isTerminal bool
+
+		wanted bool
+	} {
+		"level truecolor": {
+			args:   []string{"cli", "--color=truecolor"},
+			wanted: true,
+		},
+		"level 256": {
+			args: []string{"cli", "--color=256"},
+			wanted: true,
+		},
+		"level 16": {
+			args: []string{"cli"},
+			envs: map[string]string {
+				"FORCE_COLOR": "true",
+				"TERM": "dumb",
+			},
+			isTerminal:  true,
+			wanted: true,
+		},
+		"level none": {
+			args: []string{"cli"},
+			wanted: true,
+		},
+	}
+
+	for name, tc := range testCases {
+		t.Run(name, func(t *testing.T) {
+			// Given
+			os.Clearenv() // Start the tests from a clean state.
+			for k, v := range tc.envs {
+				os.Setenv(k, v)
+			}
+			oldIsTerminal := isTerminal
+			oldArgs := args
+
+			isTerminal = mockFalseTty()
+			if tc.isTerminal {
+				isTerminal = mockTrueTty()
+			}
+			args = tc.args
+			defer func() {
+				isTerminal = oldIsTerminal
+				args = oldArgs
+			}()
+
+			// WHEN
+			supports := SupportsNone(os.Stdout)
+
+			// Then
+			if tc.wanted != supports {
+				t.Errorf("expected %v, got %v", tc.wanted, supports)
+			}
+		})
+	}
+}
+
 func mockFalseTty() func(fd uintptr) bool {
 	return func(fd uintptr) bool {
 		return false

@@ -38,17 +38,17 @@ func Supports16M(f FileDescriptor) bool {
 
 // Supports256 returns true if the file descriptor can support 256 colors.
 func Supports256(f FileDescriptor) bool {
-	return SupportLevel(f) == Level256
+	return SupportLevel(f) >= Level256
 }
 
 // SupportsBasic returns true if the file descriptor can support the basic 16 colors.
 func SupportsBasic(f FileDescriptor) bool {
-	return SupportLevel(f) == LevelBasic
+	return SupportLevel(f) >= LevelBasic
 }
 
 // SupportNone returns true if the file descriptor cannot support colors.
 func SupportsNone(f FileDescriptor) bool {
-	return SupportLevel(f) == LevelNone
+	return SupportLevel(f) >= LevelNone
 }
 
 // SupportLevel returns the color level that's supported by the file descriptor.
