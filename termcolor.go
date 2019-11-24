@@ -65,12 +65,15 @@ func SupportLevel(f FileDescriptor) Level {
 		return Level256
 	}
 
-	if !isTerminal(f.Fd()) {
-		return LevelNone
+	if !isTerminal(f.Fd())  {
+		// If the user forces colors proceed even though it's not a terminal.
+		if _, ok := os.LookupEnv("FORCE_COLOR"); !ok {
+			return LevelNone
+		}
 	}
 
-	// Retrieve color from environment variables.
 	min := minLevel()
+	// Retrieve color from environment variables.
 	if isDumbTerminal() {
 		return min
 	}
@@ -80,14 +83,19 @@ func SupportLevel(f FileDescriptor) Level {
 	if l, isCI := lookupCI(min); isCI {
 		return l
 	}
-	if os.Getenv("COLORTERM") == "truecolor" {
+	if isTrueColorTerminal() {
 		return Level16M
 	}
 	if l, isMacOS := lookupMacOS(); isMacOS {
 		return l
 	}
-
-	return LevelNone
+	if is256Terminal() {
+		return Level256
+	}
+	if isBasicTerminal() {
+		return LevelBasic
+	}
+	return min
 }
 
 
@@ -140,10 +148,6 @@ func minLevel() Level {
 	return LevelNone
 }
 
-func isDumbTerminal() bool {
-	return os.Getenv("TERM") == "dumb"
-}
-
 func forceColorValue() Level {
 	fc := os.Getenv("FORCE_COLOR")
 	if fc == "true" {
@@ -170,7 +174,33 @@ func forceColorValue() Level {
 	}
 }
 
-// Matches if the team city version is greater than 9.1.0
+func isDumbTerminal() bool {
+	return os.Getenv("TERM") == "dumb"
+}
+
+func isTrueColorTerminal() bool {
+	return os.Getenv("COLORTERM") == "truecolor"
+}
+
+// colored256Screen matches terminals containing "-256" or "-256color".
+var colored256Screen = regexp.MustCompile(`-256(color)`)
+
+func is256Terminal() bool {
+	return colored256Screen.MatchString(os.Getenv("TERM"))
+}
+
+// coloredScreen matches other well known basic colored terminals.
+var coloredScreen = regexp.MustCompile(`^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux`)
+
+func isBasicTerminal() bool {
+	if coloredScreen.MatchString(os.Getenv("TERM")) {
+		return true
+	}
+	_, isColored := os.LookupEnv("COLORTERM")
+	return isColored
+}
+
+// teamCityVersion matches if the version is greater than 9.1.0.
 var teamCityVersion = regexp.MustCompile(`^(9\.(0*[1-9]\d*)\.|\d{2,}\.)`)
 
 func lookupCI(min Level) (Level, bool) {
@@ -213,6 +243,7 @@ func lookupMacOS() (Level, bool) {
 	}
 	switch prog {
 	case "iTerm.app":
+		// Default is 0 if can't convert to integer.
 		v, _ := strconv.Atoi(strings.Split(os.Getenv("TERM_PROGRAM_VERSION"), ".")[0])
 		if v >= 3 {
 			return Level16M, true
@@ -223,41 +254,4 @@ func lookupMacOS() (Level, bool) {
 	default:
 		return LevelNone, false
 	}
-}
-
-// Point to os.Args for testing.
-var args = os.Args
-
-// See https://github.com/sindresorhus/has-flag/blob/ecd4cb75870f5d49eef1e0faee328b2019960de3/index.js#L1-L8
-func hasFlag(flag string) bool {
-	// Prefix the flag with the necessary dashes.
-	var prefix string
-	if !strings.HasPrefix(flag, "-") {
-		if len(flag) == 1 {
-			// Short flag.
-			prefix = "-"
-		} else {
-			prefix = "--"
-		}
-	}
-	pos := indexOf(args, prefix + flag)
-	if pos == -1 {
-		return false
-	}
-	// Flag parsing stops after the "--" flag.
-	terminatorPos := indexOf(args, "--")
-	if terminatorPos == -1 {
-		// The flag exists and there is no terminator
-		return true
-	}
-	return pos < terminatorPos
-}
-
-func indexOf(ss []string, s string) int {
-	for i, el := range ss {
-		if el == s {
-			return i
-		}
-	}
-	return -1
 }
