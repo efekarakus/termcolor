@@ -2,7 +2,7 @@
 Detects what level of color support your terminal has.
 This package is heavily inspired by [chalk's support-color](https://github.com/chalk/supports-color) module.
 
-![termcolor](https://user-images.githubusercontent.com/879348/69487516-26b6c800-0e10-11ea-8f1e-ef96e884b6a5.png)
+<img width="587" alt="termcolor" src="https://user-images.githubusercontent.com/879348/69487516-26b6c800-0e10-11ea-8f1e-ef96e884b6a5.png">
 
 ## Install
 ```sh
