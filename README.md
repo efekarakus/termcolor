@@ -1,4 +1,4 @@
-# Termcolor [![Actions Status](https://github.com/efekarakus/termcolor/workflows/Go/badge.svg)](https://github.com/efekarakus/termcolor/actions)
+# Termcolor [![GoDoc](https://godoc.org/github.com/efekarakus/termcolor?status.svg)](https://godoc.org/github.com/efekarakus/termcolor) [![Actions Status](https://github.com/efekarakus/termcolor/workflows/Go/badge.svg)](https://github.com/efekarakus/termcolor/actions)
 Detects what level of color support your terminal has.
 This package is heavily inspired by [chalk's support-color](https://github.com/chalk/supports-color) module.
 
