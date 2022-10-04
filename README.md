@@ -1,4 +1,4 @@
-# Termcolor [![GoDoc](https://godoc.org/github.com/jagottsicher/termcolor?status.svg)](https://godoc.org/github.com/jagottsicher/termcolor) [![Actions Status](https://github.com/jagottsicher/termcolor/workflows/Go/badge.svg)](https://github.com/jagottsicher/termcolor/actions)
+# Termcolor [![Actions Status](https://github.com/jagottsicher/termcolor/workflows/Go/badge.svg)](https://github.com/jagottsicher/termcolor/actions) [![GoDoc](https://godoc.org/github.com/jagottsicher/termcolor?status.svg)](https://godoc.org/github.com/jagottsicher/termcolor)
 Detects what level of color support your terminal has.
 This package is heavily inspired by [chalk's support-color](https://github.com/chalk/supports-color) module.
 
