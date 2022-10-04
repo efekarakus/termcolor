@@ -1,4 +1,4 @@
-# Termcolor [![GoDoc](https://godoc.org/github.com/efekarakus/termcolor?status.svg)](https://godoc.org/github.com/efekarakus/termcolor) [![Actions Status](https://github.com/efekarakus/termcolor/workflows/Go/badge.svg)](https://github.com/efekarakus/termcolor/actions)
+# Termcolor [![Actions Status](https://github.com/jagottsicher/termcolor/workflows/Go/badge.svg)](https://github.com/jagottsicher/termcolor/actions) [![GoDoc](https://godoc.org/github.com/jagottsicher/termcolor?status.svg)](https://godoc.org/github.com/jagottsicher/termcolor)
 Detects what level of color support your terminal has.
 This package is heavily inspired by [chalk's support-color](https://github.com/chalk/supports-color) module.
 
@@ -6,7 +6,7 @@ This package is heavily inspired by [chalk's support-color](https://github.com/c
 
 ## Install
 ```sh
-go get github.com/efekarakus/termcolor
+go get github.com/jagottsicher/termcolor
 ```
 
 ## Examples
@@ -50,8 +50,9 @@ The same environment variable and flag [priorities](https://github.com/chalk/sup
 
 
 ## Credits
-* [Efe Karakus](https://www.efekarakus.com/)
-* [chalk/supports-color](https://github.com/chalk/supports-color/)
+* Originally created by [Efe Karakus](https://www.efekarakus.com/)
+* Edited & republished by [Jens Schendel](https://jens-schendel.com/)
+* Heavily inspired by [chalk/supports-color](https://github.com/chalk/supports-color/)
 
 ## License
-The MIT License (MIT) - see [LICENSE](https://github.com/efekarakus/termcolor/blob/master/LICENSE) for more details.
+The MIT License (MIT) - see [LICENSE](https://github.com/jagottsicher/termcolor/blob/master/LICENSE) for more details.
