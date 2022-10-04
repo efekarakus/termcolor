@@ -52,7 +52,7 @@ The same environment variable and flag [priorities](https://github.com/chalk/sup
 ## Credits
 * Originally created by [Efe Karakus](https://www.efekarakus.com/)
 * Edited & republished by [Jens Schendel](https://jens-schendel.com/)
-* Based on [chalk/supports-color](https://github.com/chalk/supports-color/)
+* heavily inspired by [chalk/supports-color](https://github.com/chalk/supports-color/)
 
 ## License
 The MIT License (MIT) - see [LICENSE](https://github.com/jagottsicher/termcolor/blob/master/LICENSE) for more details.
